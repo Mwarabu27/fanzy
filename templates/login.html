@@ -1,0 +1,311 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fanzy — Sign In</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #0A0B0D;
+  color: #F9FAFB;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 660px;
+  padding: 24px;
+}
+
+.card {
+  background: #13151A;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 28px;
+  padding: 48px 44px 40px;
+  box-shadow:
+    0 40px 100px rgba(0,0,0,.7),
+    0 0 0 1px rgba(255,255,255,.04) inset;
+}
+
+/* ── Logo ── */
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 36px;
+}
+
+.logo-glow-ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.logo-glow-ring::before {
+  content: '';
+  position: absolute;
+  inset: -18px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse 80% 60% at 50% 60%,
+    rgba(34,211,238,.18) 0%,
+    rgba(56,189,248,.08) 45%,
+    transparent 70%);
+  pointer-events: none;
+}
+
+.logo-img {
+  width: 280px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 18px rgba(34,211,238,.30))
+          drop-shadow(0 0 6px rgba(56,189,248,.20));
+}
+
+/* Fallback if image fails */
+.logo-fallback {
+  display: none;
+  align-items: center;
+  gap: 14px;
+}
+.logo-img.errored { display: none; }
+.logo-img.errored ~ .logo-fallback { display: flex; }
+
+.logo-mark {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, #22D3EE 0%, #3B82F6 100%);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 24px rgba(34,211,238,.35);
+}
+.logo-mark svg { width: 26px; height: 26px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.logo-name { font-size: 22px; font-weight: 800; color: #F9FAFB; letter-spacing: -.3px; }
+.logo-tag  { font-size: 12px; color: #6B7280; margin-top: 2px; }
+
+/* ── Heading ── */
+.heading {
+  font-size: 26px;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: -.4px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.subhead {
+  font-size: 14px;
+  color: #5B6478;
+  text-align: center;
+  margin-bottom: 36px;
+  line-height: 1.5;
+}
+
+/* ── Error ── */
+.error-box {
+  background: rgba(239,68,68,.07);
+  border: 1px solid rgba(239,68,68,.20);
+  border-radius: 12px;
+  padding: 13px 16px;
+  font-size: 13px;
+  color: #FCA5A5;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.error-box::before { content: '⚠'; font-size: 14px; flex-shrink: 0; }
+
+/* ── Form ── */
+.form-group { margin-bottom: 20px; }
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #A1AAB8;
+  margin-bottom: 8px;
+  letter-spacing: .1px;
+}
+
+input[type=text],
+input[type=password] {
+  width: 100%;
+  padding: 13px 16px;
+  background: #1C1F27;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 12px;
+  color: #F1F5F9;
+  font-size: 14.5px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+input[type=text]:focus,
+input[type=password]:focus {
+  border-color: rgba(59,130,246,.55);
+  box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+}
+input::placeholder { color: #3D4456; }
+
+/* ── Button ── */
+.btn-submit {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  background: #2563EB;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: .3px;
+  transition: background .16s, box-shadow .16s, transform .12s;
+  box-shadow: 0 4px 20px rgba(37,99,235,.45), 0 1px 3px rgba(0,0,0,.3);
+}
+.btn-submit:hover {
+  background: #1D4ED8;
+  box-shadow: 0 6px 28px rgba(37,99,235,.60), 0 1px 3px rgba(0,0,0,.3);
+  transform: translateY(-1px);
+}
+.btn-submit:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 12px rgba(37,99,235,.40);
+}
+
+/* ── Remember me ── */
+.remember-row { display: flex; align-items: center; margin: -6px 0 24px; }
+.remember-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #A1AAB8;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+.remember-label input[type=checkbox] {
+  width: 16px;
+  height: 16px;
+  accent-color: #2563EB;
+  cursor: pointer;
+}
+
+/* ── Footer ── */
+.footer {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #3D4456;
+}
+.footer-dot {
+  width: 7px; height: 7px;
+  background: #22C55E;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(34,197,94,.18);
+  animation: pulse 2.6s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+
+    <div class="logo-section">
+      <div class="logo-glow-ring">
+        <img class="logo-img"
+             src="{% static 'images/logo.png' %}"
+             alt="Fanzy Car Accessories"
+             onerror="this.classList.add('errored')">
+        <div class="logo-fallback">
+          <div class="logo-mark">
+            <svg viewBox="0 0 24 24"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
+          </div>
+          <div>
+            <div class="logo-name">Fanzy</div>
+            <div class="logo-tag">Car Accessories · Dar es Salaam</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="heading">Welcome back</div>
+    <div class="subhead">Sign in to your inventory dashboard</div>
+
+    {% if form.errors %}
+    <div class="error-box">Invalid username or password. Please try again.</div>
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+
+      <div class="form-group">
+        <label for="id_username">Username</label>
+        <input type="text" id="id_username" name="username"
+               autofocus autocomplete="username"
+               placeholder="Enter your username" required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_password">Password</label>
+        <input type="password" id="id_password" name="password"
+               autocomplete="current-password"
+               placeholder="Enter your password" required>
+      </div>
+
+      <div class="remember-row">
+        <label class="remember-label" for="id_remember_me">
+          <input type="checkbox" id="id_remember_me" name="remember_me">
+          Remember me for 14 days
+        </label>
+      </div>
+
+      <button type="submit" class="btn-submit">Sign In →</button>
+    </form>
+
+    <div class="footer">
+      <div class="footer-dot"></div>
+      Fanzy Car Accessories &nbsp;·&nbsp; Dar es Salaam, Tanzania
+    </div>
+
+  </div>
+</div>
+<script>
+// Always land on a blank form — clears stale values left by browser autofill
+// or the back/forward cache after signing out.
+(function () {
+  function clearCreds() {
+    var u = document.getElementById('id_username')
+    var p = document.getElementById('id_password')
+    if (u) u.value = ''
+    if (p) p.value = ''
+  }
+  // Runs once at parse time (after the inputs above exist) and again on
+  // pageshow, which covers back/forward-cache restores after logout.
+  // No delayed re-clear here — that would race with the user typing.
+  clearCreds()
+  window.addEventListener('pageshow', clearCreds)
+})()
+</script>
+</body>
+</html>
